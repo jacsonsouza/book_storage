@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: book-app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: book_storage
+      DB_USER: root
+      DB_PASSWORD: secret
+    networks:
+      - book-network
+
+  db:
+    image: mysql:8.0
+    container_name: book-db
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: book_storage
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d  # Monta a pasta com scripts de inicialização
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psecret"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - book-network
+
+networks:
+  book-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
