@@ -94,7 +94,7 @@ db IN A 10.169.191.201
 sudo snap install lxd
 lxd init --minimal
 lxc config set core.https_address :8443  # dashboard
-lxc config trust add --name terraform-access  # criar usuário
+lxc config trust add --name terraform-access  # criar usuário. OBS: Guardar o código/certificado gerado!!!
 ```
 
 # 🛠️ Configuração da VM devops
